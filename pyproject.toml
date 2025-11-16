@@ -42,6 +42,7 @@ dependencies = [
 
     # Inter-module dependencies
     "skynet-lkas @ git+https://github.com/ADS-Skynet/Lkas.git@split-module",
+    "skynet-common @ git+https://github.com/ADS-Skynet/Common.git",
 ]
 
 # Optional dependency groups
