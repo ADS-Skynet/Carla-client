@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "seame-simulation"
+name = "skynet-simulation"
 version = "0.1.0"
 description = "CARLA Simulator Integration for Autonomous Driving System"
 readme = "README.md"
@@ -41,7 +41,7 @@ dependencies = [
     "pygame>=2.5.0,<3.0.0",
 
     # Inter-module dependencies
-    "seame-lkas @ git+https://github.com/SEA-ME-Team6-Skynet/lkas.git",
+    "skynet-lkas @ git+https://github.com/ADS-Skynet/Lkas.git",
 ]
 
 # Optional dependency groups
@@ -56,7 +56,7 @@ dev = [
 ]
 
 # All optional dependencies
-all = ["seame-simulation[dev]"]
+all = ["skynet-simulation[dev]"]
 
 # Entry points for command-line scripts
 [project.scripts]

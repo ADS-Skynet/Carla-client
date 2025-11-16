@@ -1,0 +1,25 @@
+Metadata-Version: 2.4
+Name: seame-simulation
+Version: 0.1.0
+Summary: CARLA Simulator Integration for Autonomous Driving System
+Author: Skynet
+License: See LICENSE file
+Keywords: autonomous-driving,carla,simulation,vehicle-control
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: numpy<3.0.0,>=1.24.0
+Requires-Dist: opencv-python<5.0.0,>=4.8.0
+Requires-Dist: carla==0.9.16
+Requires-Dist: pillow<13.0.0,>=10.0.0
+Requires-Dist: pyyaml<7.0,>=6.0
+Requires-Dist: pyzmq<28.0.0,>=25.1.0
+Requires-Dist: pygame<3.0.0,>=2.5.0
+Requires-Dist: seame-lkas@ git+https://github.com/SEA-ME-Team6-Skynet/lkas.git
+Provides-Extra: dev
+Requires-Dist: pytest<8.0.0,>=7.4.0; extra == "dev"
+Requires-Dist: black<25.0.0,>=23.0.0; extra == "dev"
+Requires-Dist: flake8<8.0.0,>=6.0.0; extra == "dev"
+Requires-Dist: mypy<2.0.0,>=1.4.0; extra == "dev"
+Requires-Dist: isort<6.0.0,>=5.12.0; extra == "dev"
+Provides-Extra: all
+Requires-Dist: seame-simulation[dev]; extra == "all"
