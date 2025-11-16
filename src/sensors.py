@@ -8,7 +8,6 @@ import carla
 import numpy as np
 import weakref
 from typing import Callable
-import queue
 
 
 class CameraSensor:
@@ -29,7 +28,6 @@ class CameraSensor:
         self.world = world
         self.vehicle = vehicle
         self.camera: carla.Sensor | None = None
-        self.image_queue = queue.Queue()
 
         # Camera configuration
         self.width: int = 800
@@ -117,15 +115,9 @@ class CameraSensor:
         array = array[:, :, :3]  # Drop alpha, keep BGR
         array = array[:, :, ::-1]  # Convert BGR to RGB
 
-        # Store latest image
+        # Store latest image (overwrites previous, no accumulation)
         self.latest_image = array
         self.frame_count += 1
-
-        # Put in queue (non-blocking, drop old frames if queue is full)
-        try:
-            self.image_queue.put_nowait(carla_image)
-        except queue.Full:
-            pass
 
     def get_latest_image(self) -> np.ndarray | None:
         """
