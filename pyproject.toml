@@ -41,7 +41,7 @@ dependencies = [
     "pygame>=2.5.0,<3.0.0",
 
     # Inter-module dependencies
-    "skynet-lkas @ git+https://github.com/ADS-Skynet/Lkas.git",
+    "skynet-lkas @ git+https://github.com/ADS-Skynet/Lkas.git@split-module",
 ]
 
 # Optional dependency groups
