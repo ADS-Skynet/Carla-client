@@ -64,10 +64,8 @@ simulation = "simulation.run:main"
 
 # Package discovery (src-layout)
 [tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
+package-dir = {"simulation" = "src"}
+packages = ["simulation", "simulation.integration", "simulation.processing", "simulation.utils"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml", "*.yml", "*.json"]
