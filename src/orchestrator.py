@@ -11,7 +11,6 @@ import sys
 from typing import Optional, Callable
 from dataclasses import dataclass
 
-from lkas.detection.core.config import ConfigManager
 from simulation import CARLAConnection, VehicleManager, CameraSensor
 from lkas import LKAS
 from lkas.integration.messages import ControlMessage, ControlMode

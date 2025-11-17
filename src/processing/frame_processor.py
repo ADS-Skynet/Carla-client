@@ -205,7 +205,7 @@ if __name__ == "__main__":
     # Example usage
     print("Testing FrameProcessor...")
 
-    from lkas.detection.core.config import ConfigManager
+    from skynet_common.config import ConfigManager
     from lkas.detection.core.factory import DetectorFactory
 
     # Create components

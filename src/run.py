@@ -16,7 +16,7 @@ Note: This has been refactored to use SimulationOrchestrator for clean architect
 import argparse
 import sys
 
-from lkas.detection.core.config import ConfigManager
+from skynet_common.config import ConfigManager
 from simulation.orchestrator import SimulationOrchestrator, SimulationConfig
 from simulation.constants import CommunicationConstants, SimulationConstants
 
@@ -93,8 +93,8 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--control-shm-name",
         type=str,
-        default="control_commands",
-        help="Shared memory name for control commands (default: control_commands)",
+        default=CommunicationConstants.DEFAULT_CONTROL_SHM_NAME,
+        help=f"Shared memory name for control commands (default: {CommunicationConstants.DEFAULT_CONTROL_SHM_NAME})",
     )
 
     # ZMQ Broadcasting options (legacy - always enabled now)

@@ -5,6 +5,12 @@ CARLA simulation infrastructure constants.
 Following clean code principles: NO MAGIC NUMBERS!
 """
 
+from skynet_common.config import ConfigManager
+
+# Load common config once at module level
+_common_config = ConfigManager.load()
+_comm_cfg = _common_config.communication
+
 
 class SimulationConstants:
     """Constants for CARLA simulation."""
@@ -42,14 +48,16 @@ class CommunicationConstants:
     TOPIC_STATE = b'state'
     TOPIC_ACTION = b'action'
 
-    # Shared memory defaults
-    DEFAULT_IMAGE_SHM_NAME = "camera_feed"
-    DEFAULT_DETECTION_SHM_NAME = "detection_results"
+    # Shared memory defaults (from common config)
+    DEFAULT_IMAGE_SHM_NAME = _comm_cfg.image_shm_name
+    DEFAULT_DETECTION_SHM_NAME = _comm_cfg.detection_shm_name
+    DEFAULT_CONTROL_SHM_NAME = _comm_cfg.control_shm_name
 
-    # ZMQ default ports
+    # ZMQ default ports (from common config)
     DEFAULT_DETECTION_PORT = 5556
-    DEFAULT_BROADCAST_PORT = 5557
-    DEFAULT_ACTION_PORT = 5558
+    DEFAULT_BROADCAST_PORT = _comm_cfg.zmq_broadcast_port
+    DEFAULT_ACTION_PORT = _comm_cfg.zmq_action_port
+    DEFAULT_PARAMETER_PORT = _comm_cfg.zmq_parameter_port
 
     # Stream rates
     WEB_VIEWER_FPS = 30
