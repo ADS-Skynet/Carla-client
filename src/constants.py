@@ -2,66 +2,20 @@
 Simulation Constants
 
 CARLA simulation infrastructure constants.
-Following clean code principles: NO MAGIC NUMBERS!
+Only enum-like type identifiers and protocol constants are kept here.
+All configurable values have been moved to config.yaml (common or module-specific).
+
+Use ConfigManager.load() to access configuration values.
 """
 
-from skynet_common.config import ConfigManager
 
-# Load common config once at module level
-_common_config = ConfigManager.load()
-_comm_cfg = _common_config.communication
+class MessageTopics:
+    """ZMQ message topic identifiers (protocol constants)."""
 
-
-class SimulationConstants:
-    """Constants for CARLA simulation."""
-
-    # Tick rate and timing
-    TICK_RATE_HZ = 20
-    FIXED_DELTA_SECONDS = 0.05  # 1/20 = 0.05 seconds per tick
-
-    # Retry configuration
-    DEFAULT_RETRY_COUNT = 20
-    RETRY_DELAY_SECONDS = 0.5
-
-    # Warmup and initialization
-    WARMUP_FRAMES = 50
-    WARMUP_DURATION_SECONDS = 2.5  # 50 frames / 20 Hz
-
-    # Status reporting
-    STATUS_PRINT_INTERVAL_FRAMES = 30
-    LATENCY_REPORT_INTERVAL_FRAMES = 90
-
-    # Control defaults
-    DEFAULT_BASE_THROTTLE = 0.3
-    DEFAULT_DETECTOR_TIMEOUT_MS = 1000
-
-    # Pause delay when paused
-    PAUSE_SLEEP_SECONDS = 0.1
-
-
-class CommunicationConstants:
-    """Constants for inter-process communication."""
-
-    # ZMQ message topics
-    TOPIC_FRAME = b'frame'
-    TOPIC_DETECTION = b'detection'
-    TOPIC_STATE = b'state'
-    TOPIC_ACTION = b'action'
-
-    # Shared memory defaults (from common config)
-    DEFAULT_IMAGE_SHM_NAME = _comm_cfg.image_shm_name
-    DEFAULT_DETECTION_SHM_NAME = _comm_cfg.detection_shm_name
-    DEFAULT_CONTROL_SHM_NAME = _comm_cfg.control_shm_name
-
-    # ZMQ default ports (from common config)
-    DEFAULT_DETECTION_PORT = 5556
-    DEFAULT_BROADCAST_PORT = _comm_cfg.zmq_broadcast_port
-    DEFAULT_ACTION_PORT = _comm_cfg.zmq_action_port
-    DEFAULT_PARAMETER_PORT = _comm_cfg.zmq_parameter_port
-
-    # Stream rates
-    WEB_VIEWER_FPS = 30
-    STREAM_FRAME_DELAY_MS = 33  # ~30 FPS (1000ms / 30)
+    FRAME = b'frame'
+    DETECTION = b'detection'
+    STATE = b'state'
+    ACTION = b'action'
 
 
 class ActionTypes:
@@ -75,7 +29,6 @@ class ActionTypes:
 
 # Convenience exports
 __all__ = [
-    'SimulationConstants',
-    'CommunicationConstants',
+    'MessageTopics',
     'ActionTypes',
 ]

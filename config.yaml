@@ -1,41 +1,28 @@
 # Simulation Module Configuration
+# Module-specific parameters only. Common parameters are in common/config.yaml
 
-# CARLA Settings
+# CARLA Settings (override common defaults)
 carla:
-  host: "ubuntu.local"
-  port: 2000
-  timeout: 10.0
-  vehicle_type: "vehicle.tesla.model3"
+  host: "ubuntu.local"  # Module-specific: different from default "localhost"
 
-# Camera Settings
+# Simulation Timing (module-specific)
+simulation:
+  tick_rate_hz: 20                      # CARLA tick rate
+  fixed_delta_seconds: 0.05             # 1/20 = 0.05 seconds per tick
+  warmup_frames: 50                     # Frames to wait for stabilization
+  detector_timeout_ms: 1000             # Detector response timeout
+
+  # Status reporting intervals (in frames)
+  status_print_interval: 30
+  latency_report_interval: 90
+
+# Camera Settings (override common defaults)
 camera:
-  width: 800
-  height: 600
-  fov: 90.0
-  position:
-    x: 2.0   # Forward from vehicle center
-    y: 0.0   # Right from vehicle center
-    z: 1.5   # Up from vehicle center
-  rotation:
-    pitch: -10.0  # Tilt down
-    yaw: 0.0
-    roll: 0.0
+  width: 800   # Module-specific: different from default 640
+  height: 600  # Module-specific: different from default 480
 
-# Throttle Control Policy
-# Adaptive throttle reduces speed during sharp turns to prevent overshooting
-throttle_policy:
-  base: 0.14              # Base throttle when steering is minimal
-  min: 0.05               # Minimum throttle during sharp turns
-  steer_threshold: 0.15   # Steering magnitude to start reducing throttle
-  steer_max: 0.70         # Maximum expected steering magnitude
-
-# Visualization
+# Visualization (module-specific display options)
 visualization:
-  show_spectator_overlay: true
-  follow_with_spectator: false
-  alert_blink_frequency: 10
-
-  # Display options
   show_hud: true
   show_steering: true
   fill_lane: true
@@ -43,30 +30,9 @@ visualization:
   save_video: false
   video_path: "output.mp4"
 
-  # Colors (BGR format for OpenCV)
-  color_left_lane: [255, 0, 0]    # Blue
-  color_right_lane: [0, 0, 255]   # Red
-  color_lane_fill: [0, 255, 0]    # Green
-  color_centered: [0, 255, 0]     # Green
-  color_drift: [0, 255, 255]      # Yellow
-  color_departure: [0, 0, 255]    # Red
-
-  # HUD settings
-  hud_font_scale: 0.6
-  hud_thickness: 2
-  hud_margin: 20
-
-# System
+# System (module-specific)
 system:
   target_fps: 30
   enable_logging: true
   log_file: "simulation.log"
 
-# ZMQ Broadcasting
-zmq:
-  broadcast_port: 5557    # Port for frame/detection broadcasting
-  action_port: 5558       # Port for action commands
-  parameter_port: 5559    # Port for parameter updates
-  broker_port: 5560       # Port for broker communication
-  jpeg_quality: 85        # JPEG quality for frame broadcasting (0-100)
-  broadcast_log_interval: 100  # Log broadcast status every N frames

@@ -18,12 +18,14 @@ import sys
 
 from skynet_common.config import ConfigManager
 from simulation.orchestrator import SimulationOrchestrator, SimulationConfig
-from simulation.constants import CommunicationConstants, SimulationConstants
 
 
-def parse_arguments() -> argparse.Namespace:
+def parse_arguments(config) -> argparse.Namespace:
     """
     Parse command-line arguments.
+
+    Args:
+        config: System configuration for defaults
 
     Returns:
         Parsed arguments
@@ -51,20 +53,20 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--image-shm-name",
         type=str,
-        default=CommunicationConstants.DEFAULT_IMAGE_SHM_NAME,
-        help=f"Shared memory name for camera images (default: {CommunicationConstants.DEFAULT_IMAGE_SHM_NAME})",
+        default=config.communication.image_shm_name,
+        help=f"Shared memory name for camera images (default: {config.communication.image_shm_name})",
     )
     parser.add_argument(
         "--detection-shm-name",
         type=str,
-        default=CommunicationConstants.DEFAULT_DETECTION_SHM_NAME,
-        help=f"Shared memory name for detection results (default: {CommunicationConstants.DEFAULT_DETECTION_SHM_NAME})",
+        default=config.communication.detection_shm_name,
+        help=f"Shared memory name for detection results (default: {config.communication.detection_shm_name})",
     )
     parser.add_argument(
         "--detector-timeout",
         type=int,
-        default=SimulationConstants.DEFAULT_DETECTOR_TIMEOUT_MS,
-        help=f"Detection timeout in milliseconds (default: {SimulationConstants.DEFAULT_DETECTOR_TIMEOUT_MS})",
+        default=1000,  # Module-specific: 1000ms
+        help="Detection timeout in milliseconds (default: 1000)",
     )
 
     # Other options
@@ -75,14 +77,14 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--base-throttle",
         type=float,
-        default=SimulationConstants.DEFAULT_BASE_THROTTLE,
-        help=f"Base throttle during initialization/failures (default: {SimulationConstants.DEFAULT_BASE_THROTTLE})",
+        default=config.throttle_policy.base,
+        help=f"Base throttle during initialization/failures (default: {config.throttle_policy.base})",
     )
     parser.add_argument(
         "--warmup-frames",
         type=int,
-        default=SimulationConstants.WARMUP_FRAMES,
-        help=f"Frames to use base throttle before full control (default: {SimulationConstants.WARMUP_FRAMES})",
+        default=50,  # Module-specific: 50 frames
+        help="Frames to use base throttle before full control (default: 50)",
     )
     parser.add_argument(
         "--latency",
@@ -93,8 +95,8 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--control-shm-name",
         type=str,
-        default=CommunicationConstants.DEFAULT_CONTROL_SHM_NAME,
-        help=f"Shared memory name for control commands (default: {CommunicationConstants.DEFAULT_CONTROL_SHM_NAME})",
+        default=config.communication.control_shm_name,
+        help=f"Shared memory name for control commands (default: {config.communication.control_shm_name})",
     )
 
     # ZMQ Broadcasting options (legacy - always enabled now)
@@ -106,14 +108,14 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--broadcast-url",
         type=str,
-        default=f"tcp://*:{CommunicationConstants.DEFAULT_BROADCAST_PORT}",
-        help=f"ZMQ URL for broadcasting vehicle data (default: tcp://*:{CommunicationConstants.DEFAULT_BROADCAST_PORT})",
+        default=f"tcp://*:{config.communication.zmq_broadcast_port}",
+        help=f"ZMQ URL for broadcasting vehicle data (default: tcp://*:{config.communication.zmq_broadcast_port})",
     )
     parser.add_argument(
         "--action-url",
         type=str,
-        default=f"tcp://*:{CommunicationConstants.DEFAULT_ACTION_PORT}",
-        help=f"ZMQ URL for receiving actions (default: tcp://*:{CommunicationConstants.DEFAULT_ACTION_PORT})",
+        default=f"tcp://*:{config.communication.zmq_action_port}",
+        help=f"ZMQ URL for receiving actions (default: tcp://*:{config.communication.zmq_action_port})",
     )
     parser.add_argument(
         "--verbose",
@@ -158,13 +160,23 @@ def print_banner(config: SimulationConfig, system_config: object):
 
 def main():
     """Main entry point for distributed CARLA client with ZMQ broadcasting."""
-    # Parse arguments
-    args = parse_arguments()
-
-    # Load configuration
+    # Load configuration first (for defaults)
     print("\nLoading configuration...")
-    system_config = ConfigManager.load(args.config)
+    # Check if --config is in sys.argv
+    config_path = None
+    for i, arg in enumerate(sys.argv):
+        if arg == "--config" and i + 1 < len(sys.argv):
+            config_path = sys.argv[i + 1]
+            break
+    system_config = ConfigManager.load(config_path)
     print(f"✓ Configuration loaded")
+
+    # Parse arguments with config defaults
+    args = parse_arguments(system_config)
+
+    # Reload config if a different path was specified
+    if args.config and args.config != config_path:
+        system_config = ConfigManager.load(args.config)
 
     # Determine CARLA connection params
     carla_host = args.host if args.host else system_config.carla.host

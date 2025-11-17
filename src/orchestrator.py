@@ -19,7 +19,6 @@ from simulation.integration.zmq_broadcast import (
     ActionSubscriber,
     VehicleState,
 )
-from simulation.constants import SimulationConstants
 from rich.console import Console
 from rich.live import Live
 from rich.table import Table
@@ -125,7 +124,7 @@ class SimulationOrchestrator:
         if self.config.enable_sync_mode:
             self.carla_conn.setup_synchronous_mode(
                 enabled=True,
-                fixed_delta_seconds=SimulationConstants.FIXED_DELTA_SECONDS
+                fixed_delta_seconds=0.05  # Module-specific: 1/20 Hz = 0.05s
             )
         else:
             print("✓ Running in asynchronous mode")
@@ -179,8 +178,8 @@ class SimulationOrchestrator:
                     self.system_config.camera.width,
                     3
                 ),
-                retry_count=SimulationConstants.DEFAULT_RETRY_COUNT,
-                retry_delay=SimulationConstants.RETRY_DELAY_SECONDS
+                retry_count=self.system_config.retry.max_retries,
+                retry_delay=self.system_config.retry.retry_delay_s
             )
 
             print(f"✓ LKAS client ready")
@@ -310,7 +309,7 @@ class SimulationOrchestrator:
 
                 # Check if paused
                 if self.paused:
-                    time.sleep(SimulationConstants.PAUSE_SLEEP_SECONDS)
+                    time.sleep(self.system_config.timing.pause_sleep_s)
                     continue
 
                 # Tick world (if sync mode)
@@ -351,7 +350,7 @@ class SimulationOrchestrator:
                 self.frame_count += 1
 
                 # Print status periodically (only if verbose)
-                if self.config.verbose and self.frame_count % SimulationConstants.STATUS_PRINT_INTERVAL_FRAMES == 0:
+                if self.config.verbose and self.frame_count % 30 == 0:  # Module-specific: every 30 frames
                     self._print_status(last_print, detection, control)
                     last_print = time.time()
 
@@ -409,7 +408,7 @@ class SimulationOrchestrator:
 
     def _print_status(self, last_print, detection, control):
         """Print status line."""
-        fps = SimulationConstants.STATUS_PRINT_INTERVAL_FRAMES / (time.time() - last_print)
+        fps = 30 / (time.time() - last_print)  # Module-specific: 30 frames interval
 
         # Lane status
         if detection is None:
